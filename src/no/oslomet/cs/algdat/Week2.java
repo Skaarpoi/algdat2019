@@ -74,8 +74,8 @@ public class Week2 {
         BinaryTreeNode right_child = level1[1];
         BinaryTreeNode[] level0 = new BinaryTreeNode[level1.length / 2];
         int value = Math.max(left_child.value, right_child.value);
-        BinaryTreeNode level0 = new BinaryTreeNode(value);
+        level0[0] = new BinaryTreeNode(value);
 
-        return level0.value;
+        return level0[0].value;
     }
 }
