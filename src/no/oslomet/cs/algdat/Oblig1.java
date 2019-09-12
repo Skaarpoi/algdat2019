@@ -86,7 +86,10 @@ public class Oblig1 {
 
     ///// Oppgave 3 //////////////////////////////////////
     public static int antallUlikeUsortert(int[] a) {
-        throw new NotImplementedException();
+        if (a.length == 0){
+            return 0;
+        }
+        return 0;
     }
 
     ///// Oppgave 4 //////////////////////////////////////
@@ -157,9 +160,11 @@ public class Oblig1 {
         char[] c = new char[length(s)];
         int i = 0, k = 0;
         while (k < c.length) {
-            for (int j = 0; j < 5 ; j++) {
-                if (i < s[j].length()){
-                    c[k++] = s[j].charAt(i);
+            for (String value : s) {
+                if (!value.isEmpty()) {
+                    if (i < value.length()) {
+                        c[k++] = value.charAt(i);
+                    }
                 }
             }
             i++;
