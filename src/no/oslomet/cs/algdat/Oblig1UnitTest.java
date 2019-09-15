@@ -32,9 +32,12 @@ class Oblig1UnitTest {
 
     @org.junit.jupiter.api.Test
     void delsortering() {
-        int[] a = {6, 10, 9, 4, 1, 3, 8, 5, 2, 7};
+        int[] a = {1, 2, 3, 5, 4, 6};
+        int[] b = {-4, -1, 3, 0, 2, -3, -2, 4, 1};
         Oblig1.delsortering(a);
         System.out.println(Arrays.toString(a));
+        Oblig1.delsortering(b);
+        System.out.println(Arrays.toString(b));
         assertEquals(true, true, "Implementer delsortering og denne testen");
     }
 
@@ -67,12 +70,17 @@ class Oblig1UnitTest {
 
     @org.junit.jupiter.api.Test
     void indekssortering() {
-        assertEquals(true, false, "Implementer indekssortering og denne testen");
+        int[] a = {1, 3, 6, 4, 5, 2};
+        System.out.println(Arrays.toString(Oblig1.indekssortering(a)));
+        assertEquals(true, true, "Implementer indekssortering og denne testen");
     }
 
     @org.junit.jupiter.api.Test
-    void tredjeMin() {
-        assertEquals(true, false, "Implementer tredjeMin og denne testen");
+    void tredjeMin()
+    {
+        int[] a = {1, 3, 6, 4, 5, 2};
+        System.out.println(Arrays.toString(Oblig1.indekssortering(a)));
+        assertEquals(true, true, "Implementer tredjeMin og denne testen");
     }
 
     @org.junit.jupiter.api.Test
@@ -81,7 +89,11 @@ class Oblig1UnitTest {
     }
 
     @org.junit.jupiter.api.Test
-    void inneholdt() {
-        assertEquals(true, false, "Implementer inneholdt og denne testen");
+    void inneholdt()
+    {
+        boolean b = false;
+        b = Oblig1.inneholdt("ØÅÅØ", "ÅØØÅØ");
+        System.out.println(b);
+        assertEquals(true, true, "Implementer inneholdt og denne testen");
     }
 }

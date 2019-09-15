@@ -5,9 +5,12 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.IntStream;
 
 
+//Sebastian Skaar Simenstad s331355
 public class Oblig1 {
     private Oblig1() {
     }
@@ -86,25 +89,87 @@ public class Oblig1 {
 
     ///// Oppgave 3 //////////////////////////////////////
     public static int antallUlikeUsortert(int[] a) {
-        if (a.length == 0){
-            return 0;
+        int antall = 1;
+        int n = a.length;
+        if (n == 0) {
+            antall = 0;
+            return antall;
         }
-        return 0;
+        for (int i = 1; i < n ; i++) {
+            int j = 0;
+            for (; j < i; j++) {
+                if (a[i] == a[j]){
+                    break;
+                }
+            }
+            if (i == j){
+                antall++;
+            }
+        }
+        return antall;
     }
 
     ///// Oppgave 4 //////////////////////////////////////
     public static void delsortering(int[] a) {
-        int v = 0;
-        int h = a.length-1;
-        int m = a.length/2;
-        while (true){
-            if(a[m] % 2 == 0){
-                for (int i = m; i < a.length-1 ; i++) {
-
+        if (a != null) //separerer oddetall og partall
+        {
+            int v = 0;
+            int h = a.length-1;
+            while (v < h){
+                while (a[v] % 2 != 0 && v < h){
+                    v++;
                 }
+                while (a[h] % 2 == 0 && v < h){
+                    h--;
+                }
+                if (v < h){
+                    bytt(a, v, h);
+                    v++;
+                    h--;
+                }
+            }
+            System.out.println(Arrays.toString(a));
+            int m = h+1;
+            System.out.println(m);
+            v = 0;
+            h = m;
+            while (v < h)
+            {
+                bytt(a, v, min(a, v, h));
+                v++;
+            }
+            v = m;
+            h = a.length;
+            while (v < h)
+            {
+                bytt(a, v, min(a, v, h));
+                v++;
             }
         }
     }
+
+    public static int min(int[] a, int v, int h)
+    {
+        if (v < 0 || h > a.length || v >= h)
+        {
+            throw new IllegalArgumentException("Illegalt intervall!");
+        }
+
+        int m = v;
+        int minverdi = a[v];
+
+        for (int i = v + 1; i < h; i++)
+        {
+            if (a[i] < minverdi)
+            {
+                m = i;
+                minverdi = a[m];
+            }
+        }
+
+        return m;  // posisjonen til minste verdi i a[fra:til>
+    }
+
 
     ///// Oppgave 5 //////////////////////////////////////
     public static void rotasjon(char[] a) {
@@ -182,22 +247,100 @@ public class Oblig1 {
 
     ///// Oppgave 8 //////////////////////////////////////
     public static int[] indekssortering(int[] a) {
-        throw new NotImplementedException();
+        int[] temp = new int[a.length];
+        int[] index = new int[a.length];
+        System.arraycopy(a, 0, temp, 0 ,a.length);
+        for (int i = 0; i < temp.length-1 ; i++) {
+            bytt(temp, i, min(temp, i, temp.length));
+        }
+        for (int i = 0; i < temp.length; i++) {
+            for (int j = 0; j < a.length ; j++) {
+                if(temp[i] == a[j]){
+                    index[i] = j;
+                }
+            }
+        }
+        return index;
     }
 
 
     ///// Oppgave 9 //////////////////////////////////////
     public static int[] tredjeMin(int[] a) {
-        throw new NotImplementedException();
+        if (a.length < 3){
+            throw new NoSuchElementException("Tabellen er for kort!");
+        }
+        int[] temp = new int[a.length];
+        int[] index = new int[3];
+        System.arraycopy(a, 0, temp, 0 ,a.length);
+        for (int i = 0; i < 3 ; i++) {
+            bytt(temp, i, min(temp, i, temp.length));
+        }
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < a.length ; j++) {
+                if(temp[i] == a[j]){
+                    index[i] = j;
+                }
+            }
+        }
+        return index;
     }
 
     ///// Oppgave 10 //////////////////////////////////////
-    public static int bokstavNr(char bokstav) {
-        throw new NotImplementedException();
-    }
-
     public static boolean inneholdt(String a, String b) {
-        throw new NotImplementedException();
+        if (a.isEmpty()){
+            return true;
+        }
+        Set<Character> aChar = new TreeSet<>();
+        for( char c : a.toCharArray() ) {
+            aChar.add(c);
+        }
+        Character[] aArray = aChar.toArray(new Character[0]);
+        Set<Character> bChar = new TreeSet<>();
+        for( char c : b.toCharArray() ) {
+            bChar.add(c);
+        }
+        Character[] bArray = bChar.toArray(new Character[0]);
+        int[] aAntall = new int[aArray.length];
+        for (int i = 0; i < aAntall.length ; i++) {
+            int count = 0;
+            for (int j = 0; j < a.length() ; j++) {
+                if(aArray[i] == a.charAt(j)){
+                    count++;
+                }
+            }
+            aAntall[i] = count;
+        }
+        int[] bAntall = new int[bArray.length];
+        for (int i = 0; i < bAntall.length ; i++) {
+            int count = 0;
+            for (int j = 0; j < b.length() ; j++) {
+                if(bArray[i] == b.charAt(j)){
+                    count++;
+                }
+            }
+            bAntall[i] = count;
+        }
+        if (aArray.length > bArray.length){
+            return false;
+        }
+        boolean check = false;
+        for (int i = 0; i < aArray.length ; i++) {
+            check = false;
+            for (int j = 0; j < bArray.length ; j++) {
+                int first = aArray[i];
+                int second = bArray[j];
+                if (first == second){
+                    if(aAntall[i] <= bAntall[j]){
+                        check = true;
+                        break;
+                    }
+                }
+            }
+            if(!check){
+                return false;
+            }
+        }
+        return check;
     }
 
 }  // Oblig1
