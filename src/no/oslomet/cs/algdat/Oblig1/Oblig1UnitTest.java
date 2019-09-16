@@ -1,4 +1,6 @@
-package no.oslomet.cs.algdat;
+package no.oslomet.cs.algdat.Oblig1;
+
+import no.oslomet.cs.algdat.Oblig1.Oblig1;
 
 import java.util.Arrays;
 

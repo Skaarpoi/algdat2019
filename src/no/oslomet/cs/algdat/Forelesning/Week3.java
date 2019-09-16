@@ -1,4 +1,4 @@
-package no.oslomet.cs.algdat;
+package no.oslomet.cs.algdat.Forelesning;
 
 import java.util.Arrays;
 

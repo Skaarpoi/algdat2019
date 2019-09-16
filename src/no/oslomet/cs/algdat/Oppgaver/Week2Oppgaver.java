@@ -1,4 +1,4 @@
-package no.oslomet.cs.algdat;
+package no.oslomet.cs.algdat.Oppgaver;
 
 import java.util.Arrays;
 import java.util.Random;

@@ -1,4 +1,4 @@
-package no.oslomet.cs.algdat;
+package no.oslomet.cs.algdat.Forelesning;
 
 public class Week1 {
     public static void main(String[] args) {
