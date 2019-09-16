@@ -34,13 +34,11 @@ class Oblig1UnitTest {
 
     @org.junit.jupiter.api.Test
     void delsortering() {
-        int[] a = {1, 2, 3, 5, 4, 6};
-        int[] b = {-4, -1, 3, 0, 2, -3, -2, 4, 1};
-        Oblig1.delsortering(a);
-        System.out.println(Arrays.toString(a));
-        Oblig1.delsortering(b);
-        System.out.println(Arrays.toString(b));
-        assertEquals(true, true, "Implementer delsortering og denne testen");
+        int[] a = {9, 5, 3, 1, 7};
+        int[] b = {1, 3, 5, 2, 4, 6};
+        int[] c = a.clone();
+        Oblig1.delsortering(c);
+        assertEquals(Arrays.toString(b), Arrays.toString(c), "Implementer delsortering og denne testen");
     }
 
     @org.junit.jupiter.api.Test

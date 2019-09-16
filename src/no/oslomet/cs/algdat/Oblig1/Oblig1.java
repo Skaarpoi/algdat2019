@@ -1,16 +1,9 @@
-package no.oslomet.cs.algdat.Oblig1;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.IntStream;
-
-
 //Sebastian Skaar Simenstad s331355
+
+package no.oslomet.cs.algdat.Oblig1;
+import java.util.*;
+
+
 public class Oblig1 {
     private Oblig1() {
     }
@@ -31,9 +24,9 @@ public class Oblig1 {
 
 
     /*
-    * 1: det blir flest ombyttinger om arrayet er sortert i synkende rekkefølge (største tallet ligger først)
-    * 2: det blir færrest om den er sortert i stigende rekkefølge(største tallet ligger sist)
-    * 3: Det blir i gjennomsnitt*/
+    * 1: det blir flest ombyttinger om arrayet er sortert i synkende rekkefoelge (største tallet ligger først)
+    * 2: det blir faerrest om den er sortert i stigende rekkefoelge(stoerste tallet ligger sist)
+    * 3: Gjennonsmittet byttinger avhenger veldig av hvor lange arrayene er */
 
 
     public static int ombyttinger(int[] a) {
@@ -50,13 +43,6 @@ public class Oblig1 {
         }
         return ombyttinger;
     }
-
-    public static void bytt(int[] a, int i, int j) {
-        int temp = a[i];
-        a[i] = a[j];
-        a[j] = temp;
-    }
-
     ///// Oppgave 2 //////////////////////////////////////
     public static int antallUlikeSortert(int[] a) {
         int antall = 0;
@@ -111,65 +97,36 @@ public class Oblig1 {
 
     ///// Oppgave 4 //////////////////////////////////////
     public static void delsortering(int[] a) {
-        if (a != null) //separerer oddetall og partall
-        {
-            int v = 0;
-            int h = a.length-1;
-            while (v < h){
-                while (a[v] % 2 != 0 && v < h){
-                    v++;
+        if (a != null && a.length > 1){
+            int n = a.length;
+            int l = 0, r = n - 1;
+            int k = 0;
+
+            while (l < r) {
+                while (a[l] % 2 != 0 && l < a.length -1) {
+                    l++;
+                    k++;
                 }
-                while (a[h] % 2 == 0 && v < h){
-                    h--;
+                if(a[r] % 2 == 0){
+                    while (a[r] % 2 == 0 && l < r){
+                        r--;
+                    }
                 }
-                if (v < h){
-                    bytt(a, v, h);
-                    v++;
-                    h--;
+                if (l < r) {
+                    int temp = a[l];
+                    a[l] = a[r];
+                    a[r] = temp;
                 }
             }
-            System.out.println(Arrays.toString(a));
-            int m = h+1;
-            System.out.println(m);
-            v = 0;
-            h = m;
-            while (v < h)
-            {
-                bytt(a, v, min(a, v, h));
-                v++;
-            }
-            v = m;
-            h = a.length;
-            while (v < h)
-            {
-                bytt(a, v, min(a, v, h));
-                v++;
+            if(a[a.length-1] % 2 != 0){
+                k = a.length;
+                Arrays.sort(a, 0, k);
+            }else{
+                Arrays.sort(a, 0, k);
+                Arrays.sort(a, k, n);
             }
         }
     }
-
-    public static int min(int[] a, int v, int h)
-    {
-        if (v < 0 || h > a.length || v >= h)
-        {
-            throw new IllegalArgumentException("Illegalt intervall!");
-        }
-
-        int m = v;
-        int minverdi = a[v];
-
-        for (int i = v + 1; i < h; i++)
-        {
-            if (a[i] < minverdi)
-            {
-                m = i;
-                minverdi = a[m];
-            }
-        }
-
-        return m;  // posisjonen til minste verdi i a[fra:til>
-    }
-
 
     ///// Oppgave 5 //////////////////////////////////////
     public static void rotasjon(char[] a) {
@@ -235,14 +192,6 @@ public class Oblig1 {
             i++;
         }
         return new String(c);
-    }
-
-    private static int length(String... s){
-        int length = 0;
-        for (String value : s) {
-            length = length + value.length();
-        }
-        return length;
     }
 
     ///// Oppgave 8 //////////////////////////////////////
@@ -341,6 +290,64 @@ public class Oblig1 {
             }
         }
         return check;
+    }
+
+    //////Hjelpemetoder//////
+    public static void bytt(int[] a, int i, int j) {
+        int temp = a[i];
+        a[i] = a[j];
+        a[j] = temp;
+    }
+
+    public static int min(int[] a, int v, int h)
+    {
+        if (v < 0 || h > a.length || v >= h)
+        {
+            throw new IllegalArgumentException("Illegalt intervall!");
+        }
+
+        int m = v;
+        int minverdi = a[v];
+
+        for (int i = v + 1; i < h; i++)
+        {
+            if (a[i] < minverdi)
+            {
+                m = i;
+                minverdi = a[m];
+            }
+        }
+
+        return m;  // posisjonen til minste verdi i a[fra:til>
+    }
+    public static int minAlt(int[] a, int v, int h)
+    {
+        if (v < 0 || h > a.length || v >= h)
+        {
+            throw new IllegalArgumentException("Illegalt intervall!");
+        }
+
+        int m = v;
+        int minverdi = a[v];
+
+        for (int i = v + 1; i <= h; i++)
+        {
+            if (a[i] < minverdi)
+            {
+                m = i;
+                minverdi = a[m];
+            }
+        }
+
+        return m;  // posisjonen til minste verdi i a[fra:til>
+    }
+
+    private static int length(String... s){
+        int length = 0;
+        for (String value : s) {
+            length = length + value.length();
+        }
+        return length;
     }
 
 }  // Oblig1
