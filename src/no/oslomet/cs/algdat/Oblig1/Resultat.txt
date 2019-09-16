@@ -1,0 +1,11 @@
+Oblig1Test: 10 total, 10 passed
+Oppgave1     Passed
+Oppgave2     Passed 1ms
+Oppgave3     Passed 1ms
+Oppgave4     Passed 25ms
+Oppgave5     Passed 1ms
+Oppgave6     Passed 2ms
+Oppgave7     Passed
+Oppgave8     Passed 1ms
+Oppgave9     Passed 5ms
+Oppgave10    Passed 62ms
