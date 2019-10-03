@@ -89,17 +89,35 @@ public class DobbeltLenketListe<T> implements Liste<T> {
         if (antall == 0)  hode = hale = new Node<T>(verdi, null, hale);
         else hale = hale.neste = new Node<T>(verdi, hale, null);
         antall++;
+        endringer++;
         return true;
     }
 
     @Override
     public void leggInn(int indeks, T verdi) {
-        throw new NotImplementedException();
+        Objects.requireNonNull(verdi, "Ikke tillatt med null-verdier!");
+        indeksKontroll(indeks, true);
+        if(antall == 0){
+            hode = hale = new Node<T>(verdi, hode, hale);
+        }else if (indeks == 0){
+            hode = new Node<T>(verdi, null, hode);
+            hode.neste.forrige = hode;
+        }else if(indeks == antall){
+            hale = hale.neste = new Node<T>(verdi, hale, null);
+        }else{
+            Node<T> p = hode;
+            for (int i = 1; i < indeks; i++) {
+                p = p.neste;
+            }
+            p.neste = new Node<T>(verdi, p, p.neste);
+        }
+        antall++;
+        endringer++;
     }
 
     @Override
     public boolean inneholder(T verdi) {
-        throw new NotImplementedException();
+        return indeksTil(verdi) >= 0;
     }
 
     @Override
@@ -110,33 +128,80 @@ public class DobbeltLenketListe<T> implements Liste<T> {
 
     @Override
     public int indeksTil(T verdi) {
-        throw new NotImplementedException();
+        if (verdi == null){
+            return -1;
+        }
+        for (int i = 0; i < antall ; i++) {
+            if (verdi.equals((finnNode(i).verdi))){
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
     public T oppdater(int indeks, T nyverdi) {
-        indeksKontroll(indeks, false);
         Objects.requireNonNull(nyverdi, "Ikke tillatt med nullverdier!");
+        indeksKontroll(indeks, false);
         Node<T> p = finnNode(indeks);
         T gammelVerdi = p.verdi;
-
         p.verdi = nyverdi;
+        endringer++;
         return gammelVerdi;
     }
 
     @Override
     public boolean fjern(T verdi) {
         throw new NotImplementedException();
+        /*int indeks = indeksTil(verdi);
+        if (verdi == null){
+            return false;
+        }else if (indeks == 0){
+            temp = hode.verdi;
+            hode = hode.neste;
+            if (antall == 1) hale = null;
+        }else if (antall == indeks){
+
+        }
+        antall--;
+        endringer++;
+        return true; */
     }
 
     @Override
     public T fjern(int indeks) {
-        throw new NotImplementedException();
+        indeksKontroll(indeks, false);
+        T temp;
+        if (indeks == 0){
+            temp = hode.verdi;
+            hode = hode.neste;
+            if (hode != null) hode.forrige = null;
+            if (antall == 1) hale = null;
+        }else if (indeks == antall-1){
+            temp = hale.verdi;
+            hale = hale.forrige;
+            hale.neste = null;
+        }else {
+            Node<T> p = finnNode(indeks - 1);
+            Node<T> q = p.neste;
+            temp = q.verdi;
+
+            p.neste = q.neste;
+            if(q.neste != null) {
+                q.neste.forrige = q.forrige;
+            }
+        }
+        antall--;
+        endringer++;
+        return temp;
     }
 
     @Override
     public void nullstill() {
-        throw new NotImplementedException();
+        int n = antall;
+        for (int i = 0; i < n ; i++) {
+            fjern(0);
+        }
     }
 
     @Override
@@ -175,11 +240,12 @@ public class DobbeltLenketListe<T> implements Liste<T> {
 
     @Override
     public Iterator<T> iterator() {
-        throw new NotImplementedException();
+        return new DobbeltLenketListeIterator();
     }
 
     public Iterator<T> iterator(int indeks) {
-        throw new NotImplementedException();
+        indeksKontroll(indeks, false);
+        return new DobbeltLenketListeIterator(indeks);
     }
 
     private Node<T> finnNode(int indeks){
@@ -216,26 +282,54 @@ public class DobbeltLenketListe<T> implements Liste<T> {
         private int iteratorendringer;
 
         private DobbeltLenketListeIterator(){
-            throw new NotImplementedException();
+            denne = hode;     // p starter på den første i listen
+            fjernOK = false;  // blir sann når next() kalles
+            iteratorendringer = endringer;  // teller endringer
         }
 
         private DobbeltLenketListeIterator(int indeks){
-            throw new NotImplementedException();
+            denne = finnNode(indeks);
+            fjernOK = false;
+            iteratorendringer = endringer;
         }
 
         @Override
         public boolean hasNext(){
-            throw new NotImplementedException();
+            return denne != null;
         }
 
         @Override
         public T next(){
-            throw new NotImplementedException();
+            if (iteratorendringer != endringer){
+                throw new ConcurrentModificationException();
+            }
+            if (!hasNext()){
+                throw new NoSuchElementException();
+            }
+            fjernOK = true;
+            return denne.verdi;
         }
 
         @Override
         public void remove(){
-            throw new NotImplementedException();
+            if (!fjernOK){
+                throw new IllegalStateException();
+            }
+            if (iteratorendringer != endringer){
+                throw new ConcurrentModificationException();
+            }
+            fjernOK = false;
+            if (antall ==1){
+                hale = hode = null;
+            }else if (denne == null){
+                hale = hale.forrige;
+                hale.neste = null;
+            }else if (denne.forrige == hode){
+                hode = denne;
+                denne.forrige = null;
+            }else{
+
+            }
         }
 
     } // class DobbeltLenketListeIterator
