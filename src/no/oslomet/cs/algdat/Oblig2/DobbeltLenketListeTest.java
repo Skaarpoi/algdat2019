@@ -758,6 +758,7 @@ class DobbeltLenketListeTest {
 
         if (!liste.omvendtString().equals("[H, E, C]")) {
             antallFeil++;
+            System.out.println(liste.omvendtString());
             System.out.println("Oppgave 6n: Feil i metoden fjern(T)!");
         }
 
