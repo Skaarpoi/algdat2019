@@ -1,3 +1,5 @@
+//Sebastian Skaar Simenstad S331355
+
 package no.oslomet.cs.algdat.Oblig2;
 
 
@@ -87,7 +89,7 @@ public class DobbeltLenketListe<T> implements Liste<T> {
     public boolean leggInn(T verdi) {
         Objects.requireNonNull(verdi, "Ikke tillatt med null-verdier!");
         if (antall == 0)  hode = hale = new Node<T>(verdi, null, hale);
-        else hale = hale.neste = new Node<T>(verdi, hale, null);
+        else if (hale != null) hale = hale.neste = new Node<T>(verdi, hale, null);
         antall++;
         endringer++;
         return true;
@@ -335,15 +337,19 @@ public class DobbeltLenketListe<T> implements Liste<T> {
                 throw new ConcurrentModificationException();
             }
             fjernOK = false;
-            if (antall ==1){
-                hale = hode = null;
-            }else if (denne == null){
-                hale = hale.forrige;
-            }else if (denne.forrige == hode){
+            if (antall ==1) hale = hode = null;
+            else if (denne == null){
+                if (hale != null && hale.forrige !=null){
+                    hale = hale.forrige;
+                    hale.neste = null;
+                }
+            }
+            else if (denne.forrige == hode){
                 hode = denne;
                 denne.forrige = null;
             }else{
-
+                denne.forrige.forrige.neste = denne;
+                denne.forrige = denne.forrige.forrige;
             }
             antall--;
             endringer++;
@@ -353,7 +359,27 @@ public class DobbeltLenketListe<T> implements Liste<T> {
     } // class DobbeltLenketListeIterator
 
     public static <T> void sorter(Liste<T> liste, Comparator<? super T> c) {
-        throw new NotImplementedException();
+        Node<T> n, q;
+        if (liste.antall() <= 1) return;
+        for (int i = 0; i < liste.antall() ; i++) {
+            n = ((DobbeltLenketListe<T>) liste).hode;
+            q = n.neste;
+            for (int j = 0; j < liste.antall(); j++) {
+                if (q == null) break;
+                if (c.compare(n.verdi, q.verdi) > 0){
+                    T verdi = q.verdi;
+                    q.verdi = n.verdi;
+                    n.verdi = verdi;
+                    n = q;
+                    q = n.neste;
+                } else {
+                    n = q;
+                    q = n.neste;
+                }
+
+            }
+
+        }
     }
 
 } // class DobbeltLenketListe
