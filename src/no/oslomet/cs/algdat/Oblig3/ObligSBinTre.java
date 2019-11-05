@@ -85,12 +85,63 @@ public class ObligSBinTre<T> implements Beholder<T> {
     @Override
     public boolean fjern(T verdi)
     {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
+        if (verdi == null) return false;
+
+        Node<T> p = rot, q = null;
+
+        while (p != null)
+        {
+            int cmp = comp.compare(verdi,p.verdi);
+            if (cmp < 0) { q = p; p = p.venstre; }
+            else if (cmp > 0) { q = p; p = p.høyre; }
+            else break;
+        }
+        if (p == null) return false;
+
+        if (p.venstre == null || p.høyre == null)
+        {
+            Node<T> b = p.venstre != null ? p.venstre : p.høyre;
+            if (p == rot) rot = b;
+            else if (p == q.venstre) q.venstre = b;
+            else q.høyre = b;
+        }
+        else
+        {
+            Node<T> s = p, r = p.høyre;
+            while (r.venstre != null)
+            {
+                s = r;
+                r = r.venstre;
+            }
+
+            p.verdi = r.verdi;
+
+            if (s != p) s.venstre = r.høyre;
+            else s.høyre = r.høyre;
+        }
+
+        antall--;
+        return true;
     }
 
     public int fjernAlle(T verdi)
     {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
+        int fjernet = 0;
+        if (verdi == null) return 0;
+        Node<T> p = inorden();
+
+        while (p != null){
+            int cmp = comp.compare(verdi,p.verdi);
+            if (cmp == 0){
+                //delete node
+                p = nesteInorden(p);
+                antall--;
+                fjernet++;
+            }else {
+                p = nesteInorden(p);
+            }
+        }
+        return fjernet;
     }
 
     @Override
@@ -129,23 +180,79 @@ public class ObligSBinTre<T> implements Beholder<T> {
     @Override
     public void nullstill()
     {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
+        Node<T> p = inorden();
+        while (p != null){
+            Node<T> q = p;
+            p = null;
+            p = nesteInorden(q);
+        }
+    }
+
+    private static <T> Node<T> førsteInorden(Node<T> p)
+    {
+        while (p.venstre != null) p = p.venstre;
+        return p;
     }
 
     private static <T> Node<T> nesteInorden(Node<T> p)
     {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
+        if (p.høyre != null)
+        {
+            return førsteInorden(p.høyre);
+        }
+        else
+        {
+            while (p.forelder != null && p.forelder.høyre == p)
+            {
+                p = p.forelder;
+            }
+            return p.forelder;
+        }
     }
 
     @Override
     public String toString()
     {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
+        Node<T> p = inorden();
+        StringBuilder str = new StringBuilder();
+        str.append("[");
+        while (p != null) {
+            str.append(p.verdi);
+            p = nesteInorden(p);
+            str.append(", ");
+        }
+        str.delete(str.length()-2,str.length());
+        str.append("]");
+        return str.toString();
     }
 
     public String omvendtString()
     {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
+        if (tom()) return "[]";            // tomt tre
+
+        Stakk<Node<T>> stakk = new TabellStakk<>();
+        Node<T> p = rot;
+        for ( ; p.høyre != null; p = p.høyre) stakk.leggInn(p);
+
+        StringBuilder str = new StringBuilder();
+        str.append("[");
+        while (true) {
+            str.append(p.verdi);
+            str.append(", ");
+
+            if (p.venstre != null)
+            {
+                for (p = p.venstre; p.høyre != null; p = p.høyre) {
+                    stakk.leggInn(p);
+
+                }
+            } else if (!stakk.tom()) {
+                p = stakk.taUt();
+            } else break;
+        }
+        str.delete(str.length()-2,str.length());
+        str.append("]");
+        return str.toString();
     }
 
     public String høyreGren()
@@ -209,5 +316,13 @@ public class ObligSBinTre<T> implements Beholder<T> {
         }
 
     } // BladnodeIterator
+
+    private Node<T> inorden(){
+        Node<T> p = rot;
+        while(p.venstre != null){
+            p = p.venstre;
+        }
+        return p;
+    }
 
 }
