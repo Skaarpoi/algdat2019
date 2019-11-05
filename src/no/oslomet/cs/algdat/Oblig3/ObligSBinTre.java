@@ -101,9 +101,16 @@ public class ObligSBinTre<T> implements Beholder<T> {
         if (p.venstre == null || p.høyre == null)
         {
             Node<T> b = p.venstre != null ? p.venstre : p.høyre;
-            if (p == rot) rot = b;
-            else if (p == q.venstre) q.venstre = b;
-            else q.høyre = b;
+            if (p == rot){
+                rot = b;
+            }
+            else if (p == q.venstre) {
+                q.venstre = b;
+            }
+            else {
+                q.høyre = b;
+
+            }
         }
         else
         {
@@ -128,12 +135,37 @@ public class ObligSBinTre<T> implements Beholder<T> {
     {
         int fjernet = 0;
         if (verdi == null) return 0;
-        Node<T> p = inorden();
+        Node<T> p = inorden(), q = null;
 
         while (p != null){
             int cmp = comp.compare(verdi,p.verdi);
             if (cmp == 0){
-                //delete node
+                if(p.venstre == null && p.høyre == null){
+                    if(p == rot){
+                        rot = null;
+                    }else{
+                        q = p.forelder;
+                        if (p == q.venstre){
+                            q.venstre = null;
+                        }else {
+                            q.høyre = null;
+                        }
+                    }
+                }
+                else if (p.venstre != null && p.høyre == null){
+                    if (p == rot) rot = p.venstre;
+                    else {
+                        q = p.forelder;
+                        q.venstre = p.venstre;
+                    }
+                }
+                else if (p.høyre != null && p.venstre == null){
+                    if (p == rot) rot = p.høyre;
+                    else {
+                        q = p.forelder;
+                        q.høyre = p.høyre;
+                    }
+                }
                 p = nesteInorden(p);
                 antall--;
                 fjernet++;
@@ -257,12 +289,30 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
     public String høyreGren()
     {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
+        if (rot == null) return "[]";
+        Node<T> p = rot;
+        StringBuilder str = new StringBuilder();
+        str.append("[");
+        while (p != null){
+            str.append(p.verdi);
+            if (p.høyre != null){
+                str.append(", ");
+                p = p.høyre;
+            }else if (p.venstre != null){
+                str.append(", ");
+                p = p.venstre;
+            }
+            else{
+                str.append("]");
+                break;
+            }
+        }
+        return str.toString();
     }
 
     public String lengstGren()
     {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
+        if (rot == null) return "[]";
     }
 
     public String[] grener()
@@ -277,7 +327,17 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
     public String postString()
     {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
+        Node <T> p = førstPostorden();
+        StringBuilder str = new StringBuilder();
+        str.append("[");
+        while (p != null){
+            str.append(p.verdi);
+            p = nestePostorden(p);
+            if (p != null){
+                str.append(", ");
+            }
+        }
+        return str.toString();
     }
 
     @Override
@@ -323,6 +383,29 @@ public class ObligSBinTre<T> implements Beholder<T> {
             p = p.venstre;
         }
         return p;
+    }
+
+    public Node<T> førstPostorden()
+    {
+        if (tom()) throw new NoSuchElementException("Treet er tomt!");
+
+        Node<T> p = rot;
+        while (true)
+        {
+            if (p.venstre != null) p = p.venstre;
+            else if (p.høyre != null) p = p.høyre;
+            else return p;
+        }
+    }
+
+    private static <T> Node<T> nestePostorden(Node<T> p)
+    {
+        while (p.forelder != null && p.forelder.venstre == p)
+        {
+            p = p.forelder;
+        }
+        return p.forelder;
+
     }
 
 }
