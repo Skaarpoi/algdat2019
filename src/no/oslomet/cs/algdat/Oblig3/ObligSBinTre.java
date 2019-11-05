@@ -313,6 +313,7 @@ public class ObligSBinTre<T> implements Beholder<T> {
     public String lengstGren()
     {
         if (rot == null) return "[]";
+        return "[]";
     }
 
     public String[] grener()
