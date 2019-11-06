@@ -316,12 +316,8 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
         while(!queue.isEmpty()){
             p = queue.removeFirst();
-            if(p.høyre != null) {
-                queue.addLast(p.høyre);
-            }
-            if(p.venstre != null){
-                queue.addLast(p.venstre);
-            }
+            if(p.høyre != null) queue.addLast(p.høyre);
+            if(p.venstre != null) queue.addLast(p.venstre);
         }
 
         ArrayDeque<T> stakk = new ArrayDeque<>();
@@ -335,7 +331,41 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
     public String[] grener()
     {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
+        if (antall == 0 || rot == null) return new String[] {"[]"};
+        if (antall() == 1) return new String[] {"[" + rot.verdi + "]"};
+
+        Node<T> p = førsteInorden(rot);
+        Deque<Node> grenDekk = new ArrayDeque<>();
+
+        while (p != null){
+            p = nesteInorden(p);
+            if (p == null) break;
+            if(p.venstre == null && p.høyre == null) grenDekk.push(p);
+        }
+
+        String[] s = new String[grenDekk.size()];
+        Node q = null;
+
+        int teller = 0;
+
+        while (!grenDekk.isEmpty()){
+            Deque<Node> omvendtQ = new ArrayDeque<>();
+            q = grenDekk.removeLast();
+            s[teller] = "[";
+
+            while (q != null){
+                omvendtQ.push(q);
+                q = q.forelder;
+            }
+
+            while (!omvendtQ.isEmpty()){
+                Node tmp = omvendtQ.pop();
+                if (omvendtQ.size() == 0) s[teller] += tmp.verdi + "]";
+                else s[teller] += tmp.verdi + ", ";
+            }
+            teller++;
+        }
+        return s;
     }
 
     public String bladnodeverdier()
@@ -353,25 +383,15 @@ public class ObligSBinTre<T> implements Beholder<T> {
     }
 
     private static <T> void rekursivInorden(Node p, StringBuilder tekst) {
-        if(p.venstre != null) {
-            rekursivInorden(p.venstre,tekst);
-        }
-        if(p.venstre == null && p.høyre == null) {
-            tekst.append(p.verdi).append(", ");
-        }
-        if (p.høyre != null) {
-            rekursivInorden(p.høyre,tekst);
-        }
+        if (p.venstre != null) rekursivInorden(p.venstre,tekst);
+        if (p.venstre == null && p.høyre == null) tekst.append(p.verdi).append(", ");
+        if (p.høyre != null) rekursivInorden(p.høyre,tekst);
     }
 
     public String postString()
     {
-        if(antall == 0){
-            return "[]";
-        }
-        if(antall == 1){
-            return "[" + rot.verdi + "]";
-        }
+        if (antall == 0) return "[]";
+        if (antall == 1) return "[" + rot.verdi + "]";
 
         StringBuilder str = new StringBuilder();
 
@@ -385,21 +405,14 @@ public class ObligSBinTre<T> implements Beholder<T> {
             p = stack1.pop();
             stack2.push(p);
 
-            if(p.venstre != null){
-                stack1.push(p.venstre);
-            }
-            if(p.høyre != null){
-                stack1.push(p.høyre);
-            }
+            if(p.venstre != null) stack1.push(p.venstre);
+            if(p.høyre != null) stack1.push(p.høyre);
         }
 
         str.append("[");
         while (!stack2.isEmpty()){
-            if(stack2.size() == 1){
-                str.append(stack2.pop().verdi).append("]");
-            }else{
-                str.append(stack2.pop().verdi).append("]");
-            }
+            if(stack2.size() == 1) str.append(stack2.pop().verdi).append("]");
+            else str.append(stack2.pop().verdi).append("]");
         }
         return str.toString();
     }
