@@ -202,17 +202,18 @@ public class ObligSBinTre<T> implements Beholder<T> {
     public void nullstill()
     {
         Node<T> p = rot;
-        Node<T> q;
+        Node<T> q = null;
 
         while (antall > 0){
-            while (p.venstre != null|| p.høyre != null ) {
+            while (p.venstre != null || p.høyre != null ) {
                 if (p.venstre != null) p = p.venstre;
                 else p = p.høyre;
             }
 
 
-            q = p.forelder;
-            p = q;
+            q = p;
+            p = p.forelder;
+            q = null;
             endringer++;
             antall--;
         }
@@ -241,8 +242,7 @@ public class ObligSBinTre<T> implements Beholder<T> {
     @Override
     public String toString()
     {
-        StringBuilder str = new StringBuilder();
-        str.append("[");
+        StringBuilder str = new StringBuilder("[");
         int tekstAntall = 0;
         if (rot != null){
             Node<T> p = førsteInorden(rot);
@@ -260,7 +260,7 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
     public String omvendtString()
     {
-        if (tom()) return "[]";            // tomt tre
+        if (tom()) return "[]";
 
         Stakk<Node<T>> stakk = new TabellStakk<>();
         Node<T> p = rot;
@@ -376,10 +376,10 @@ public class ObligSBinTre<T> implements Beholder<T> {
         if (antall == 0 || rot == null) return "[]";
 
         Node<T> p = rot;
-        StringBuilder str = new StringBuilder();
-        str.append("[");
+        StringBuilder str = new StringBuilder("[");
         rekursivInorden(p, str);
-        str.replace(str.length() - 2, str.length(), "]");
+        str.delete(str.length() - 2, str.length());
+        str.append("]");
         return str.toString();
     }
 
@@ -399,7 +399,7 @@ public class ObligSBinTre<T> implements Beholder<T> {
         Deque<Node> stack1 = new ArrayDeque<>();
         Deque<Node> stack2 = new ArrayDeque<>();
 
-        Node p;
+        Node<T> p;
         stack1.push(rot);
 
         while (!stack1.isEmpty()){
@@ -413,7 +413,7 @@ public class ObligSBinTre<T> implements Beholder<T> {
         str.append("[");
         while (!stack2.isEmpty()){
             if(stack2.size() == 1) str.append(stack2.pop().verdi).append("]");
-            else str.append(stack2.pop().verdi).append("]");
+            else str.append(stack2.pop().verdi).append(", ");
         }
         return str.toString();
     }
@@ -435,7 +435,7 @@ public class ObligSBinTre<T> implements Beholder<T> {
             if (rot != null){
                 while(p.venstre != null || p.høyre != null){
                     if (p.venstre != null) p = p.venstre;
-                    if (p.høyre != null) p = p.høyre;
+                    else p = p.høyre;
                 }
             }
         }
