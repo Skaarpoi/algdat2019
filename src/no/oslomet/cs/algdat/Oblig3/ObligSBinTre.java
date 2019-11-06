@@ -366,14 +366,39 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
     public String postString()
     {
-        Node <T> p = førstPostorden();
+        if(antall == 0){
+            return "[]";
+        }
+        if(antall == 1){
+            return "[" + rot.verdi + "]";
+        }
+
         StringBuilder str = new StringBuilder();
+
+        Deque<Node> stack1 = new ArrayDeque<>();
+        Deque<Node> stack2 = new ArrayDeque<>();
+
+        Node p;
+        stack1.push(rot);
+
+        while (!stack1.isEmpty()){
+            p = stack1.pop();
+            stack2.push(p);
+
+            if(p.venstre != null){
+                stack1.push(p.venstre);
+            }
+            if(p.høyre != null){
+                stack1.push(p.høyre);
+            }
+        }
+
         str.append("[");
-        while (p != null){
-            str.append(p.verdi);
-            p = nestePostorden(p);
-            if (p != null){
-                str.append(", ");
+        while (!stack2.isEmpty()){
+            if(stack2.size() == 1){
+                str.append(stack2.pop().verdi).append("]");
+            }else{
+                str.append(stack2.pop().verdi).append("]");
             }
         }
         return str.toString();
