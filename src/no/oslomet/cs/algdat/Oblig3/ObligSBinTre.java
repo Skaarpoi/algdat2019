@@ -148,9 +148,17 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
     public int fjernAlle(T verdi)
     {
+        if (verdi == null || antall == 0) return 0;
         int fjernet = 0;
-        if (verdi == null) return 0;
-        
+        boolean fjernOK = true;
+
+        while (fjernOK){
+            fjernOK = fjern(verdi);
+
+            if(fjernOK){
+                fjernet++;
+            }
+        }
         return fjernet;
     }
 
