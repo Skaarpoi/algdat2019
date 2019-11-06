@@ -78,7 +78,6 @@ public class ObligSBinTre<T> implements Beholder<T> {
             else if (cmp > 0) p = p.høyre;
             else return true;
         }
-
         return false;
     }
 
@@ -102,18 +101,31 @@ public class ObligSBinTre<T> implements Beholder<T> {
         {
             Node<T> b = p.venstre != null ? p.venstre : p.høyre;
             if (p == rot){
-                rot = b;
+                if (b != null){
+                    rot = b;
+                    rot.forelder = null;
+                }else{
+                    rot = null;
+                }
             }
             else if (p == q.venstre) {
-                q.venstre = b;
+                if(b != null){
+                    q.venstre = b;
+                    b.forelder = q;
+                }else {
+                    q.venstre = null;
+                }
             }
             else {
-                q.høyre = b;
-
+                if(b != null){
+                    q.høyre = b;
+                    b.forelder = q;
+                }else {
+                    q.høyre = null;
+                }
             }
-        }
-        else
-        {
+            p = null;
+        } else {
             Node<T> s = p, r = p.høyre;
             while (r.venstre != null)
             {
@@ -125,9 +137,12 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
             if (s != p) s.venstre = r.høyre;
             else s.høyre = r.høyre;
+
+            r = null;
         }
 
         antall--;
+        endringer++;
         return true;
     }
 
@@ -135,44 +150,7 @@ public class ObligSBinTre<T> implements Beholder<T> {
     {
         int fjernet = 0;
         if (verdi == null) return 0;
-        Node<T> p = inorden(), q = null;
-
-        while (p != null){
-            int cmp = comp.compare(verdi,p.verdi);
-            if (cmp == 0){
-                if(p.venstre == null && p.høyre == null){
-                    if(p == rot){
-                        rot = null;
-                    }else{
-                        q = p.forelder;
-                        if (p == q.venstre){
-                            q.venstre = null;
-                        }else {
-                            q.høyre = null;
-                        }
-                    }
-                }
-                else if (p.venstre != null && p.høyre == null){
-                    if (p == rot) rot = p.venstre;
-                    else {
-                        q = p.forelder;
-                        q.venstre = p.venstre;
-                    }
-                }
-                else if (p.høyre != null && p.venstre == null){
-                    if (p == rot) rot = p.høyre;
-                    else {
-                        q = p.forelder;
-                        q.høyre = p.høyre;
-                    }
-                }
-                p = nesteInorden(p);
-                antall--;
-                fjernet++;
-            }else {
-                p = nesteInorden(p);
-            }
-        }
+        
         return fjernet;
     }
 
