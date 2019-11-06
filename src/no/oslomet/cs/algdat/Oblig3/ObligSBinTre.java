@@ -63,6 +63,7 @@ public class ObligSBinTre<T> implements Beholder<T> {
         else q.høyre = p;
 
         antall++;
+        endringer++;
         return true;
     }
 
@@ -201,21 +202,17 @@ public class ObligSBinTre<T> implements Beholder<T> {
     public void nullstill()
     {
         Node<T> p = rot;
-        Node<T> q = null;
+        Node<T> q;
 
         while (antall > 0){
-
-            while (p.venstre != null|| p.høyre != null ){
-                if(p.venstre != null){
-                    p = p.venstre;
-                }else{
-                    p = p.høyre;
-                }
+            while (p.venstre != null|| p.høyre != null ) {
+                if (p.venstre != null) p = p.venstre;
+                else p = p.høyre;
             }
 
-            q = p;
-            p = p.forelder;
-            q = null;
+
+            q = p.forelder;
+            p = q;
             endringer++;
             antall--;
         }
@@ -244,15 +241,19 @@ public class ObligSBinTre<T> implements Beholder<T> {
     @Override
     public String toString()
     {
-        Node<T> p = inorden();
         StringBuilder str = new StringBuilder();
         str.append("[");
-        while (p != null) {
-            str.append(p.verdi);
-            p = nesteInorden(p);
-            str.append(", ");
+        int tekstAntall = 0;
+        if (rot != null){
+            Node<T> p = førsteInorden(rot);
+            str.append(p);
+            while (tekstAntall < antall() -1) {
+                p = nesteInorden(p);
+                str.append(", ");
+                str.append(p);
+                tekstAntall++;
+            }
         }
-        str.delete(str.length()-2,str.length());
         str.append("]");
         return str.toString();
     }
@@ -333,7 +334,7 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
     public String[] grener()
     {
-        if (antall == 0 || rot == null) return new String[] {"[]"};
+        if (antall == 0 || rot == null) return new String[0];
         if (antall() == 1) return new String[] {"[" + rot.verdi + "]"};
 
         Node<T> p = førsteInorden(rot);
@@ -372,22 +373,20 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
     public String bladnodeverdier()
     {
-        if (antall == 0 || rot == null){
-            return "[]";
-        }
+        if (antall == 0 || rot == null) return "[]";
 
         Node<T> p = rot;
         StringBuilder str = new StringBuilder();
-        str.append("[]");
+        str.append("[");
         rekursivInorden(p, str);
         str.replace(str.length() - 2, str.length(), "]");
         return str.toString();
     }
 
-    private static <T> void rekursivInorden(Node p, StringBuilder tekst) {
-        if (p.venstre != null) rekursivInorden(p.venstre,tekst);
-        if (p.venstre == null && p.høyre == null) tekst.append(p.verdi).append(", ");
-        if (p.høyre != null) rekursivInorden(p.høyre,tekst);
+    private static <T> void rekursivInorden(Node p, StringBuilder str) {
+        if (p.venstre != null) rekursivInorden(p.venstre,str);
+        if (p.høyre != null) rekursivInorden(p.høyre,str);
+        if (p.venstre == null && p.høyre == null) str.append(p.verdi).append(", ");
     }
 
     public String postString()
@@ -433,7 +432,12 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
         private BladnodeIterator()  // konstruktør
         {
-            throw new UnsupportedOperationException("Ikke kodet ennå!");
+            if (rot != null){
+                while(p.venstre != null || p.høyre != null){
+                    if (p.venstre != null) p = p.venstre;
+                    if (p.høyre != null) p = p.høyre;
+                }
+            }
         }
 
         @Override
@@ -445,7 +449,18 @@ public class ObligSBinTre<T> implements Beholder<T> {
         @Override
         public T next()
         {
-            throw new UnsupportedOperationException("Ikke kodet ennå!");
+            if (iteratorendringer != endringer) throw new ConcurrentModificationException();
+            if (rot == null) throw new NoSuchElementException("Ingen bladnoder");
+            if (p == null) throw new NoSuchElementException("Ingen bladnoder");
+
+            Node<T> tmp = p;
+
+            q = p;
+            p = nesteInorden(p);
+            while (p !=null && (p.venstre != null || p.høyre != null)) p = nesteInorden(p);
+
+            removeOK = true;
+            return tmp.verdi;
         }
 
         @Override
