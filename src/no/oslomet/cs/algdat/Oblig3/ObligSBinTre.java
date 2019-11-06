@@ -1,3 +1,5 @@
+//Sebastian Skaar Simenstad s331355
+
 package no.oslomet.cs.algdat.Oblig3;
 
 import java.util.*;
@@ -460,29 +462,6 @@ public class ObligSBinTre<T> implements Beholder<T> {
             p = p.venstre;
         }
         return p;
-    }
-
-    public Node<T> førstPostorden()
-    {
-        if (tom()) throw new NoSuchElementException("Treet er tomt!");
-
-        Node<T> p = rot;
-        while (true)
-        {
-            if (p.venstre != null) p = p.venstre;
-            else if (p.høyre != null) p = p.høyre;
-            else return p;
-        }
-    }
-
-    private static <T> Node<T> nestePostorden(Node<T> p)
-    {
-        while (p.forelder != null && p.forelder.venstre == p)
-        {
-            p = p.forelder;
-        }
-        return p.forelder;
-
     }
 
 }
