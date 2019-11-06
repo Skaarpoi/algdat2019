@@ -198,12 +198,26 @@ public class ObligSBinTre<T> implements Beholder<T> {
     @Override
     public void nullstill()
     {
-        Node<T> p = inorden();
-        while (p != null){
-            Node<T> q = p;
-            p = null;
-            p = nesteInorden(q);
+        Node<T> p = rot;
+        Node<T> q = null;
+
+        while (antall > 0){
+
+            while (p.venstre != null|| p.høyre != null ){
+                if(p.venstre != null){
+                    p = p.venstre;
+                }else{
+                    p = p.høyre;
+                }
+            }
+
+            q = p;
+            p = p.forelder;
+            q = null;
+            endringer++;
+            antall--;
         }
+        rot = null;
     }
 
     private static <T> Node<T> førsteInorden(Node<T> p)
@@ -214,14 +228,11 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
     private static <T> Node<T> nesteInorden(Node<T> p)
     {
-        if (p.høyre != null)
-        {
+        if (p.høyre != null) {
             return førsteInorden(p.høyre);
         }
-        else
-        {
-            while (p.forelder != null && p.forelder.høyre == p)
-            {
+        else {
+            while (p.forelder != null && p.forelder.høyre == p) {
                 p = p.forelder;
             }
             return p.forelder;
@@ -298,8 +309,28 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
     public String lengstGren()
     {
-        if (rot == null) return "[]";
-        return "[]";
+        if (rot == null || tom()) return "[]";
+        Node<T> p = null;
+        ArrayDeque<Node<T>> queue = new ArrayDeque<>();
+        queue.add(rot);
+
+        while(!queue.isEmpty()){
+            p = queue.removeFirst();
+            if(p.høyre != null) {
+                queue.addLast(p.høyre);
+            }
+            if(p.venstre != null){
+                queue.addLast(p.venstre);
+            }
+        }
+
+        ArrayDeque<T> stakk = new ArrayDeque<>();
+        while (p != null){
+            stakk.addFirst(p.verdi);
+            p = p.forelder;
+        }
+
+        return stakk.toString();
     }
 
     public String[] grener()
